@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-
-const STORAGE_KEY = 'task-tracker-tasks';
+import { api } from '../api.js';
 
 const SAMPLE_TASKS = [
   {
@@ -48,20 +47,37 @@ const SAMPLE_TASKS = [
 ];
 
 export function useTasks() {
-  const [tasks, setTasks] = useState(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : SAMPLE_TASKS;
-    } catch {
-      return SAMPLE_TASKS;
-    }
-  });
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  }, [tasks]);
+    async function init() {
+      // Migrate any existing localStorage tasks into SQLite (runs once)
+      await api.migrateFromLocalStorage();
 
-  const addTask = (task) => {
+      // Load tasks from SQLite via API
+      let loaded = await api.getTasks();
+
+      // If DB is empty (very first run with no localStorage data), seed samples
+      if (loaded.length === 0) {
+        await fetch('/api/tasks/bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tasks: SAMPLE_TASKS }),
+        });
+        loaded = await api.getTasks();
+      }
+
+      setTasks(loaded);
+      setLoading(false);
+    }
+    init().catch((err) => {
+      console.error('Failed to load tasks from server:', err);
+      setLoading(false);
+    });
+  }, []);
+
+  const addTask = async (task) => {
     const newTask = {
       time: 'All day',
       category: 'Other',
@@ -69,32 +85,31 @@ export function useTasks() {
       id: crypto.randomUUID(),
       prepSteps: task.prepSteps || [],
     };
-    setTasks((prev) => [...prev, newTask]);
+    const saved = await api.createTask(newTask);
+    setTasks((prev) => [saved, ...prev]);
   };
 
-  const updateTask = (id, updates) => {
-    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...updates } : t)));
+  const updateTask = async (id, updates) => {
+    const saved = await api.updateTask(id, updates);
+    setTasks((prev) => prev.map((t) => (t.id === id ? saved : t)));
   };
 
-  const deleteTask = (id) => {
+  const deleteTask = async (id) => {
+    await api.deleteTask(id);
     setTasks((prev) => prev.filter((t) => t.id !== id));
   };
 
-  const togglePrepStep = (taskId, stepId) => {
-    setTasks((prev) =>
-      prev.map((t) => {
-        if (t.id !== taskId) return t;
-        return {
-          ...t,
-          prepSteps: t.prepSteps.map((s) =>
-            s.id === stepId ? { ...s, done: !s.done } : s
-          ),
-        };
-      })
+  const togglePrepStep = async (taskId, stepId) => {
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task) return;
+    const newPrepSteps = task.prepSteps.map((s) =>
+      s.id === stepId ? { ...s, done: !s.done } : s
     );
+    const saved = await api.updateTask(taskId, { prepSteps: newPrepSteps });
+    setTasks((prev) => prev.map((t) => (t.id === taskId ? saved : t)));
   };
 
-  return { tasks, addTask, updateTask, deleteTask, togglePrepStep };
+  return { tasks, loading, addTask, updateTask, deleteTask, togglePrepStep };
 }
 
 export function getDaysUntil(dateStr) {

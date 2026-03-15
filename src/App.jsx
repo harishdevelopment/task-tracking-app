@@ -15,7 +15,7 @@ function getGreeting() {
 }
 
 export default function App() {
-  const { tasks, addTask, updateTask, deleteTask, togglePrepStep } = useTasks();
+  const { tasks, loading, addTask, updateTask, deleteTask, togglePrepStep } = useTasks();
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
 
@@ -35,6 +35,11 @@ export default function App() {
 
   return (
     <div className="app">
+      {loading && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999, textAlign: 'center', padding: '8px', background: '#1a1a2e', color: '#aaa', fontSize: '13px' }}>
+          Loading tasks from database…
+        </div>
+      )}
       {/* Top nav */}
       <nav className="topnav">
         <div className="topnav-inner">
@@ -54,7 +59,7 @@ export default function App() {
         {/* Greeting */}
         <div className="hero">
           <div className="hero-text">
-            <h1 className="greeting-title">{getGreeting()}, Ruth and Kiru!</h1>
+            <h1 className="greeting-title">{getGreeting()}´!</h1>
             <p className="greeting-sub">Here's what's on your plate. Stay organized and on track.</p>
           </div>
         </div>
