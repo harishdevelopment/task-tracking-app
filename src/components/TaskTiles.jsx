@@ -4,7 +4,7 @@ import { getDaysUntil, getUrgencyClass } from '../hooks/useTasks';
 const CATEGORY_STYLES = {
   Family:  { bg: '#e8f0fe', color: '#4285f4' },
   Social:  { bg: '#f3e8fd', color: '#9333ea' },
-  Church:  { bg: '#fef3c7', color: '#d97706' },
+  Event:  { bg: '#fef3c7', color: '#d97706' },
   Work:    { bg: '#dcfce7', color: '#16a34a' },
   Health:  { bg: '#fee2e2', color: '#ef4444' },
   Other:   { bg: '#f1f5f9', color: '#64748b' },

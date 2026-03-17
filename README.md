@@ -8,7 +8,7 @@ A personal event and task tracking app for staying organised. Built with React +
 - **Preparation steps** — break each task into checklist steps and tick them off as you go
 - **Calendar view** — see all your events laid out by date
 - **Status tracking** — move tasks between *To Do*, *In Progress*, and *Done*
-- **Categories** — organise by Family, Social, Church, Work, Health, or Other
+- **Categories** — organise by Family, Social, Event, Work, Health, or Other
 - **Browser notifications** — get reminded about upcoming events (via the Notifications setup)
 - **Persistent SQLite storage** — everything is saved to a SQLite database in your home directory; nothing is lost on refresh
 
@@ -97,6 +97,58 @@ run-app-windows.bat
 - Run the app in **PowerShell** or **Windows Terminal** (not the old `cmd.exe`)
 - The database will be at `C:\Users\<yourname>\tasks.db`
 
+## Running E2E Tests (Playwright)
+
+The project includes end-to-end tests using [Playwright](https://playwright.dev/) that cover task CRUD, status changes, calendar navigation, and more.
+
+### First-time setup
+
+Install the Chromium browser binary used by Playwright:
+
+```bash
+npx playwright install chromium
+```
+
+### Run tests
+
+```bash
+# Headless (default) — starts the app automatically
+npm run test:e2e
+
+# Interactive UI mode — great for debugging
+npm run test:e2e:ui
+
+# Headed mode — watch tests run in a real browser
+npm run test:e2e:headed
+
+# View the last HTML report
+npm run test:e2e:report
+```
+
+Tests automatically start the Vite + Express servers, so you don't need to run `npm run dev` separately.
+
+### Quick test scripts
+
+#### macOS
+
+```bash
+./run-app-mac.sh test
+```
+
+#### Windows
+
+```bat
+run-app-windows.bat test
+```
+
+These scripts install dependencies and Playwright browsers if needed, then run the full test suite.
+
+### CI / GitHub Actions
+
+A GitHub Actions workflow (`.github/workflows/playwright.yml`) runs the E2E tests automatically on every pull request targeting `main`. The HTML test report is uploaded as an artifact on every run.
+
+To use it as a **required status check**, go to your repo's **Settings → Branches → Branch protection rules** and add **"Playwright Tests"** as a required check.
+
 ## Available Scripts
 
 | Command | Description |
@@ -106,4 +158,8 @@ run-app-windows.bat
 | `npm run preview` | Preview the production build locally |
 | `npm run server` | Start only the Express/SQLite server |
 | `npm run lint` | Run ESLint |
+| `npm run test:e2e` | Run Playwright E2E tests (headless) |
+| `npm run test:e2e:ui` | Run tests in interactive UI mode |
+| `npm run test:e2e:headed` | Run tests in a visible browser |
+| `npm run test:e2e:report` | Open the last HTML test report |
 

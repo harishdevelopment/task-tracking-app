@@ -1,7 +1,7 @@
 const CATEGORY_STYLES = {
   Family:  { bg: '#e8f0fe', color: '#4285f4', icon: 'F' },
   Social:  { bg: '#f3e8fd', color: '#9333ea', icon: 'S' },
-  Church:  { bg: '#fef3c7', color: '#d97706', icon: 'C' },
+  Event:  { bg: '#fef3c7', color: '#d97706', icon: 'C' },
   Work:    { bg: '#dcfce7', color: '#16a34a', icon: 'W' },
   Health:  { bg: '#fee2e2', color: '#ef4444', icon: 'H' },
   Other:   { bg: '#f1f5f9', color: '#64748b', icon: 'O' },

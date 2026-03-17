@@ -11,7 +11,7 @@ const EMPTY_TASK = {
   prepSteps: [],
 };
 
-const CATEGORIES = ['Family', 'Social', 'Church', 'Work', 'Health', 'Other'];
+const CATEGORIES = ['Family', 'Social', 'Event', 'Work', 'Health', 'Other'];
 
 export default function TaskForm({ task, onSave, onClose }) {
   const [form, setForm] = useState(EMPTY_TASK);

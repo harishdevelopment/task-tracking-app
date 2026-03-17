@@ -14,5 +14,14 @@ if [ ! -d "node_modules" ]; then
   npm install
 fi
 
-echo "Starting PlanTrack (Vite + Express)..."
-npm run dev
+if [ "${1:-}" = "test" ]; then
+  echo "Preparing Playwright tests..."
+  npm install
+  echo "Installing Playwright Chromium browser (skipped if already present)..."
+  npx playwright install chromium
+  echo "Running E2E tests..."
+  npm run test:e2e
+else
+  echo "Starting PlanTrack (Vite + Express)..."
+  npm run dev
+fi

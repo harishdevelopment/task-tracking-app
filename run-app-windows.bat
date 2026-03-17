@@ -15,5 +15,15 @@ if not exist node_modules (
   if errorlevel 1 exit /b 1
 )
 
-echo Starting PlanTrack (Vite + Express)...
-call npm run dev
+if "%~1"=="test" (
+  echo Preparing Playwright tests...
+  call npm install
+  if errorlevel 1 exit /b 1
+  call npx playwright install chromium
+  if errorlevel 1 exit /b 1
+  echo Running E2E tests...
+  call npm run test:e2e
+) else (
+  echo Starting PlanTrack (Vite + Express)...
+  call npm run dev
+)
