@@ -9,7 +9,7 @@ The Tasks feature is the core of PlanTrack. It allows the user to create, read, 
 
 ## Storage
 
-Tasks are stored server-side in SQLite (`~/tasks.db`), not in the browser. The `useTasks` hook in the frontend communicates exclusively with the REST API; there is no `localStorage` usage for task data. On first load, any tasks previously saved in `localStorage` (key: `task-tracker-tasks`) are automatically migrated to SQLite once via `POST /api/tasks/bulk`.
+Tasks are stored server-side in SQLite (`~/tasks.db`), not in the browser. The `useTasks` hook in the frontend communicates exclusively with the REST API; there is no `localStorage` usage for task data.
 
 ## Data Shape
 
@@ -64,7 +64,6 @@ Each task is a flat object with JSON-serialised array fields:
 
 - `GET /api/tasks` → `Task[]` (all tasks, ordered by `created_at DESC` from server; frontend sorts by dueDate)
 - `POST /api/tasks` → `Task` (created task)
-- `POST /api/tasks/bulk` → `{ imported: number }` (bulk import — used for one-time localStorage migration)
 - `PUT /api/tasks/:id` → `Task` (updated task)
 - `DELETE /api/tasks/:id` → `{ success: true }`
 

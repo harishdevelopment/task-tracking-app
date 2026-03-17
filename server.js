@@ -66,37 +66,6 @@ app.post('/api/tasks', (req, res) => {
   res.status(201).json(deserialize(db.prepare('SELECT * FROM tasks WHERE id = ?').get(id)))
 })
 
-// POST bulk import (localStorage migration)
-app.post('/api/tasks/bulk', (req, res) => {
-  const { tasks } = req.body
-  if (!Array.isArray(tasks) || tasks.length === 0) return res.json({ imported: 0 })
-
-  const insert = db.prepare(`
-    INSERT OR REPLACE INTO tasks (id, title, dueDate, time, category, assignees, status, notes, prepSteps, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `)
-
-  db.transaction((list) => {
-    for (const t of list) {
-      insert.run(
-        t.id || randomUUID(),
-        t.title || '',
-        t.dueDate || '',
-        t.time || 'All day',
-        t.category || 'Other',
-        JSON.stringify(t.assignees || []),
-        t.status || 'todo',
-        t.notes || '',
-        JSON.stringify(t.prepSteps || []),
-        t.created_at || t.createdAt || new Date().toISOString()
-      )
-    }
-  })(tasks)
-
-  console.log(`✅ Migrated ${tasks.length} tasks from browser localStorage → SQLite`)
-  res.json({ imported: tasks.length })
-})
-
 // PUT update task
 app.put('/api/tasks/:id', (req, res) => {
   const existing = db.prepare('SELECT * FROM tasks WHERE id = ?').get(req.params.id)

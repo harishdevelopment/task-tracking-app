@@ -73,7 +73,6 @@ All endpoints served by `server.js` on port **3001** (proxied from Vite on 5173)
 |---|---|---|
 | GET | `/api/tasks` | List all tasks |
 | POST | `/api/tasks` | Create task |
-| POST | `/api/tasks/bulk` | Bulk import (localStorage migration) |
 | PUT | `/api/tasks/:id` | Update task (including toggling prep steps) |
 | DELETE | `/api/tasks/:id` | Delete task |
 | POST | `/api/tasks/:id/generate-prep` | Call OpenAI to generate prep steps |

@@ -59,9 +59,25 @@ The database is a single file saved in your **home directory**:
 
 You can inspect or back up this file at any time. To view it directly, use the [DB Browser for SQLite](https://sqlitebrowser.org/) (free, cross-platform).
 
-### Migrating existing data
+### Data storage behavior
 
-If you previously used the app and had tasks saved in the browser (localStorage), they are **automatically migrated** into SQLite the first time you open the app after this update. This runs once and won't duplicate your data on subsequent loads.
+Task data is SQLite-only. 
+
+## Quick Start Scripts (Root Folder)
+
+Use these scripts from the project root to install dependencies (if needed) and start both frontend + backend together.
+
+### macOS
+
+```bash
+./run-app-mac.sh
+```
+
+### Windows
+
+```bat
+run-app-windows.bat
+```
 
 ## macOS Notes
 
