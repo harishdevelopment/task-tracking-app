@@ -1,72 +1,13 @@
 import { useState, useEffect } from 'react';
 import { api } from '../api.js';
 
-const SAMPLE_TASKS = [
-  {
-    id: '1',
-    title: "Children's Sunday School Competition",
-    dueDate: '2026-03-16',
-    time: '10:00 AM',
-    category: 'Family',
-    assignees: ['Alice', 'Bob'],
-    status: 'todo',
-    notes: 'Annual Sunday school competition at the community center.',
-    prepSteps: [
-      { id: 'p1', text: 'Register participants', done: true },
-      { id: 'p2', text: 'Prepare materials', done: false },
-    ],
-  },
-  {
-    id: '2',
-    title: 'Friends Weekend Visit',
-    dueDate: '2026-03-22',
-    time: 'All day',
-    category: 'Social',
-    assignees: ['Carol', 'Dave'],
-    status: 'todo',
-    notes: 'Weekend get-together with college friends.',
-    prepSteps: [
-      { id: 'p3', text: 'Book accommodation', done: false },
-      { id: 'p4', text: 'Plan activities', done: false },
-    ],
-  },
-  {
-    id: '3',
-    title: 'Church International Day',
-    dueDate: '2026-03-30',
-    time: '9:00 AM',
-    category: 'Church',
-    assignees: [],
-    status: 'todo',
-    notes: 'Annual international day celebration at church.',
-    prepSteps: [
-      { id: 'p5', text: 'Prepare cultural display', done: false },
-      { id: 'p6', text: 'Coordinate with team', done: false },
-    ],
-  },
-];
-
 export function useTasks() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function init() {
-      // Migrate any existing localStorage tasks into SQLite (runs once)
-      await api.migrateFromLocalStorage();
-
-      // Load tasks from SQLite via API
-      let loaded = await api.getTasks();
-
-      // If DB is empty (very first run with no localStorage data), seed samples
-      if (loaded.length === 0) {
-        await fetch('/api/tasks/bulk', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tasks: SAMPLE_TASKS }),
-        });
-        loaded = await api.getTasks();
-      }
+      const loaded = await api.getTasks();
 
       setTasks(loaded);
       setLoading(false);
