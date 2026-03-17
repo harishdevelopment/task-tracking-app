@@ -8,7 +8,6 @@
 | Styling | Plain CSS (`App.css`, `index.css`) | No CSS framework — custom class names |
 | Backend | Express 5 (Node.js) | `server.js` at repo root |
 | Database | SQLite via `better-sqlite3` | DB file at `~/tasks.db` (user home dir) |
-| AI | OpenAI API (GPT-4o-mini) | For generating prep plan steps |
 | Dev runner | `concurrently` | Runs Vite + Express side-by-side |
 
 ## Directory Layout
@@ -53,7 +52,7 @@ CREATE TABLE tasks (
   title       TEXT NOT NULL DEFAULT '',
   dueDate     TEXT DEFAULT '',           -- ISO date string YYYY-MM-DD
   time        TEXT DEFAULT 'All day',
-  category    TEXT DEFAULT 'Other',      -- Work | Personal | Health | Social | Finance | Education | Other
+  category    TEXT DEFAULT 'Other',      -- Family | Social | Event | Work | Health | Other
   assignees   TEXT DEFAULT '[]',         -- JSON array of name strings
   status      TEXT DEFAULT 'todo',       -- todo | in-progress | done
   notes       TEXT DEFAULT '',
@@ -75,7 +74,6 @@ All endpoints served by `server.js` on port **3001** (proxied from Vite on 5173)
 | POST | `/api/tasks` | Create task |
 | PUT | `/api/tasks/:id` | Update task (including toggling prep steps) |
 | DELETE | `/api/tasks/:id` | Delete task |
-| POST | `/api/tasks/:id/generate-prep` | Call OpenAI to generate prep steps |
 
 ## Frontend Data Flow
 
@@ -98,7 +96,6 @@ No global state manager — all state lives in useTasks.js via useState.
 - **No CSS framework** — styles are written in `App.css`; do not add Tailwind, Bootstrap, or similar.
 - **No auth** — single user, no session or token management.
 - **JSONified arrays** — `assignees` and `prepSteps` are stored as JSON strings in SQLite; deserialised in `deserialize()` in `server.js`.
-- **AI key via env** — `OPENAI_API_KEY` in `.env.local`; never committed.
 - **DB location** — `~/tasks.db` (user home directory); keeps the project dir clean.
 - **Vite proxy** — `/api` requests are proxied from port 5173 → 3001 via `vite.config.js`.
 
@@ -106,6 +103,7 @@ No global state manager — all state lives in useTasks.js via useState.
 
 | Days until due | Class / Label |
 |---|---|
+| < 0 | `urgency-overdue` / red (past due) |
 | 0–1 | `urgency-urgent` / red |
 | 2–3 | `urgency-soon` / amber |
 | 4+ | `urgency-normal` / green |
