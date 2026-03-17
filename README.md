@@ -72,6 +72,7 @@ If you previously used the app and had tasks saved in the browser (localStorage)
 ## Windows Notes
 
 - Install Node.js from [nodejs.org](https://nodejs.org) (LTS recommended)
+- Always run `npm install` before `npm run dev` — this installs `concurrently` and other local tools that the scripts depend on
 - `better-sqlite3` requires native compilation — install the Windows build tools first if you get an error during `npm install`:
   ```powershell
   npm install --global windows-build-tools
