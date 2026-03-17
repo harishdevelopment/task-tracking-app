@@ -30,10 +30,10 @@ Single-user app. No authentication, no multi-tenancy.
 - As a user, my tasks are saved permanently in a local SQLite database and are not lost when I close the browser.
 
 ### Preparation Plans
-- As a user, I can generate a preparation plan for a task with 3-5 high-level steps.
+- As a user, I can add preparation steps to a task when creating or editing it.
 - Each prep step has a title and can be checked off as done.
-- A progress bar shows how many steps are complete.
 - Steps are color-coded by urgency: red (≤1 day), amber (≤3 days), green (on track).
+- The PrepPlan view shows all upcoming tasks sorted by due date and highlights "Today's focus" for near-due tasks.
 
 ### Calendar
 - As a user, I can see all tasks and their due dates on a monthly/weekly calendar.
@@ -53,11 +53,7 @@ Single-user app. No authentication, no multi-tenancy.
 
 ## Categories
 
-Tasks can be tagged with one of: `Work`, `Personal`, `Health`, `Social`, `Finance`, `Education`, `Other`.
-
-## Priority Levels
-
-`Low`, `Medium`, `High`
+Tasks can be tagged with one of: `Family`, `Social`, `Event`, `Work`, `Health`, `Other`.
 
 ## Task Statuses
 

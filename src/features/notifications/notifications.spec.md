@@ -26,8 +26,8 @@ Keep the user aware of upcoming tasks and their preparation status through in-ap
 ## Acceptance Criteria
 
 - [ ] `NotificationSetup` component requests `Notification.requestPermission()` on mount if permission is `'default'`.
-- [ ] If permission is `'granted'`, a `new Notification(...)` fires for each task due within 7 days on page load.
-- [ ] Only one notification per task per page load (no duplicates if component re-renders).
+- [ ] If permission is `'granted'`, a single combined `new Notification(...)` fires on page load listing all tasks due within 7 days.
+- [ ] Only one notification per page load (no duplicates if component re-renders).
 - [ ] If permission is `'denied'` or browser does not support Notification API, fail silently.
 - [ ] Notifications are not sent for tasks with `status === 'done'`.
 
@@ -52,11 +52,11 @@ if (Notification.permission === 'default') {
   Notification.requestPermission();
 }
 
-// Fire notification
+// Fire a single combined notification listing all upcoming tasks
 if (Notification.permission === 'granted') {
-  new Notification('PlanTrack Reminder', {
-    body: `${task.title} is due in ${daysLeft} days`,
-    icon: '/favicon.ico',
+  new Notification('📅 Daily Task Reminder', {
+    body: lines.join('\n'),  // one bullet per upcoming task
+    icon: '/vite.svg',
   });
 }
 ```

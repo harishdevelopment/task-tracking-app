@@ -21,7 +21,7 @@ Each task is a flat object with JSON-serialised array fields:
   title:      string,        // Required. Event/task name
   dueDate:    string,        // YYYY-MM-DD
   time:       string,        // e.g. "3:00 PM" or "All day"
-  category:   string,        // Work | Personal | Health | Social | Finance | Education | Other
+  category:   string,        // Family | Social | Event | Work | Health | Other
   assignees:  string[],      // Names of people involved
   status:     string,        // todo | in-progress | done
   notes:      string,        // Free-text description / notes
