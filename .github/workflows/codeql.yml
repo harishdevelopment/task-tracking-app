@@ -9,6 +9,7 @@
 # the `language` matrix defined below to confirm you have the correct set of
 # supported CodeQL languages.
 #
+---
 name: "CodeQL Advanced"
 
 on:
@@ -40,7 +41,7 @@ jobs:
       contents: read
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include:
         - language: javascript-typescript
