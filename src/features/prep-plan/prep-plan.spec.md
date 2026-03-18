@@ -43,7 +43,8 @@ Prep steps are stored as a JSON array on the parent task row:
 
 | Component | File | Responsibility |
 |---|---|---|
-| PrepPlan | `src/components/PrepPlan.jsx` | Renders prep cards for all upcoming tasks |
+| PrepPlan | `src/components/PrepPlan.jsx` | Renders prep cards for all upcoming tasks (not currently mounted in App.jsx) |
+| TaskTiles | `src/components/TaskTiles.jsx` | Surfaces prep step progress and toggling inside task tiles (active in App.jsx) |
 | TaskForm | `src/components/TaskForm.jsx` | Add / remove prep steps when creating or editing a task |
 | useTasks | `src/hooks/useTasks.js` | `togglePrepStep(taskId, stepId)` patches `prepSteps` via PUT |
 

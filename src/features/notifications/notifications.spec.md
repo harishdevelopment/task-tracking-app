@@ -25,10 +25,11 @@ Keep the user aware of upcoming tasks and their preparation status through in-ap
 
 ## Acceptance Criteria
 
-- [ ] `NotificationSetup` component requests `Notification.requestPermission()` on mount if permission is `'default'`.
-- [ ] If permission is `'granted'`, a single combined `new Notification(...)` fires on page load listing all tasks due within 7 days.
-- [ ] Only one notification per page load (no duplicates if component re-renders).
-- [ ] If permission is `'denied'` or browser does not support Notification API, fail silently.
+- [ ] `NotificationSetup` renders a prompt UI when permission is `'default'`; it does **not** auto-request permission on mount.
+- [ ] Clicking "Enable Notifications" calls `Notification.requestPermission()` and, if granted, immediately fires the reminder notification.
+- [ ] If permission is `'granted'`, the component shows "Notifications enabled" with a "Send reminder now" button; no notification fires automatically on page load.
+- [ ] Only one notification per user action (no duplicates on re-render).
+- [ ] If permission is `'denied'` or browser does not support Notification API, fail silently (show informational message for `'denied'`).
 - [ ] Notifications are not sent for tasks with `status === 'done'`.
 
 ## Components
@@ -47,18 +48,20 @@ Keep the user aware of upcoming tasks and their preparation status through in-ap
 ## Browser Notification API Notes
 
 ```js
-// Permission request
-if (Notification.permission === 'default') {
-  Notification.requestPermission();
-}
+// User clicks "Enable Notifications" → requestAndSchedule(tasks) is called
+Notification.requestPermission().then((perm) => {
+  if (perm !== 'granted') return;
 
-// Fire a single combined notification listing all upcoming tasks
-if (Notification.permission === 'granted') {
+  // Fire a single combined notification listing all upcoming tasks (due within 7 days)
+  const upcoming = tasks
+    .filter((t) => t.status !== 'done')
+    .filter((t) => t.daysLeft >= 0 && t.daysLeft <= 7);
+
   new Notification('📅 Daily Task Reminder', {
     body: lines.join('\n'),  // one bullet per upcoming task
     icon: '/vite.svg',
   });
-}
+});
 ```
 
 ## Out of Scope
