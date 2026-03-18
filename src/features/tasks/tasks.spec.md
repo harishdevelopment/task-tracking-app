@@ -55,10 +55,10 @@ Each task is a flat object with JSON-serialised array fields:
 
 | Component | File | Responsibility |
 |---|---|---|
-| EventList | `src/components/EventList.jsx` | Master task list with filters, edit/delete actions |
+| EventList | `src/components/EventList.jsx` | Upcoming events list (next 30 days) with edit/delete actions |
 | TaskForm | `src/components/TaskForm.jsx` | Create/edit modal form |
-| TaskTiles | `src/components/TaskTiles.jsx` | Summary stat cards (total, upcoming, in-progress, done) |
-| useTasks | `src/hooks/useTasks.js` | Data hook — all API calls and shared state |
+| TaskTiles | `src/components/TaskTiles.jsx` | All-tasks tile grid with status filters, progress bars, prep step toggling, edit/delete |
+| useTasks | `src/hooks/useTasks.js` | Data hook — shared state + helper exports (`getDaysUntil`, `getUrgencyClass`) |
 
 ## API Contracts
 

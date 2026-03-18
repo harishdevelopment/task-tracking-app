@@ -24,14 +24,16 @@
 │   │   ├── prep-plan/prep-plan.spec.md
 │   │   └── notifications/notifications.spec.md
 │   ├── components/              # React UI components
-│   │   ├── EventList.jsx        # Master list of tasks with filters
+│   │   ├── EventList.jsx        # Upcoming events list (next 30 days) with edit/delete
 │   │   ├── TaskForm.jsx         # Create / edit task modal
-│   │   ├── TaskTiles.jsx        # Summary tile cards (status counts)
+│   │   ├── TaskTiles.jsx        # All-tasks tile grid with filters, progress, prep steps
+│   │   ├── TaskList.jsx         # Alternative task list view (not mounted in App.jsx)
 │   │   ├── CalendarView.jsx     # Monthly calendar grid
-│   │   ├── PrepPlan.jsx         # Preparation plan cards per task
-│   │   └── NotificationSetup.jsx# Browser notification permission + daily alert
+│   │   ├── PrepPlan.jsx         # Preparation plan cards (not mounted in App.jsx)
+│   │   └── NotificationSetup.jsx# Browser notification permission UI + reminder sender
 │   ├── hooks/
-│   │   └── useTasks.js          # Central data hook — all API calls, state, helpers
+│   │   └── useTasks.js          # Central data hook — shared state + helper exports
+│   ├── api.js                   # Fetch wrapper — all REST calls to the Express API
 │   ├── App.jsx                  # Root component — layout, routing between views
 │   ├── App.css                  # All app-level styles
 │   └── main.jsx                 # React entry point
@@ -79,13 +81,15 @@ All endpoints served by `server.js` on port **3001** (proxied from Vite on 5173)
 
 ```
 App.jsx
-  └── useTasks.js (hook)
-        ├── fetchTasks()  → GET /api/tasks  → tasks[]
-        ├── addTask()     → POST /api/tasks
-        ├── updateTask()  → PUT /api/tasks/:id
-        ├── deleteTask()  → DELETE /api/tasks/:id
-        └── togglePrepStep() → PUT /api/tasks/:id (patches prepSteps array)
+  └── useTasks.js (hook)                    ← exposes: tasks, loading, addTask,
+        │                                      updateTask, deleteTask, togglePrepStep
+        └── api.js (fetch wrapper)
+              ├── api.getTasks()     → GET /api/tasks  → tasks[]
+              ├── api.createTask()   → POST /api/tasks
+              ├── api.updateTask()   → PUT /api/tasks/:id
+              └── api.deleteTask()  → DELETE /api/tasks/:id
 
+togglePrepStep() patches the prepSteps array in-memory and calls api.updateTask().
 Components receive tasks[] as props and call action callbacks.
 No global state manager — all state lives in useTasks.js via useState.
 ```
@@ -96,14 +100,19 @@ No global state manager — all state lives in useTasks.js via useState.
 - **No CSS framework** — styles are written in `App.css`; do not add Tailwind, Bootstrap, or similar.
 - **No auth** — single user, no session or token management.
 - **JSONified arrays** — `assignees` and `prepSteps` are stored as JSON strings in SQLite; deserialised in `deserialize()` in `server.js`.
+- **API client** — all `fetch` calls are centralised in `src/api.js`; `useTasks.js` calls `api.*` methods and never calls `fetch` directly.
 - **DB location** — `~/tasks.db` (user home directory); keeps the project dir clean.
 - **Vite proxy** — `/api` requests are proxied from port 5173 → 3001 via `vite.config.js`.
 
 ## Urgency Color Coding
 
-| Days until due | Class / Label |
-|---|---|
-| < 0 | `urgency-overdue` / red (past due) |
-| 0–1 | `urgency-urgent` / red |
-| 2–3 | `urgency-soon` / amber |
-| 4+ | `urgency-normal` / green |
+`getUrgencyClass(days)` in `src/hooks/useTasks.js` returns a bare modifier string used in component-specific class names:
+
+| Days until due | `getUrgencyClass()` return | Example applied class |
+|---|---|---|
+| < 0 | `'overdue'` | `tile-countdown overdue` |
+| 0–1 | `'urgent'` | `tile-countdown urgent` · `urgency-urgent` |
+| 2–3 | `'soon'` | `tile-countdown soon` · `urgency-soon` |
+| 4+ | `'normal'` | `tile-countdown normal` · `urgency-normal` |
+
+`TaskTiles.jsx` uses the pattern `tile-countdown ${cls}`; `PrepPlan.jsx` uses `urgency-${urgency}` on card wrappers.
